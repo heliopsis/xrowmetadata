@@ -15,7 +15,27 @@ This will create a file for every siteaccess within your eZ Publish root directo
 Please ensure that your Apache rewrite rules permit access to the XML File. This can be done by adding the following line to your .htaccess or Apache configuration file:
 
     RewriteRule ^sitemap[^/]*\.xml - [L]
-    
+
+Finally you need to attached the Metadatatype to some of your content classes and add the following code to you head of your HTML document.
+
+{def $meta = metadata( $module_result.node_id ) }
+{if $meta}
+    {if $meta.title}
+        <title>{$meta.title|wash}</title>
+    {/if}
+    {if $meta.keywords}
+        <meta name="keywords" content="{$meta.keywords|wash}" />
+    {/if}
+    {if $meta.description}
+        <meta name="description" content="{$meta.description|wash}" />
+    {/if}
+{else} 
+    <title>{$site_title}</title>
+    {foreach $site.meta as $key => $item }
+    <meta name="{$key|wash}" content="{$item|wash}" />
+    {/foreach}
+{/if}
+
 Troubleshooting & support
 =========================
 Send email to service [at] xrow [dot] de

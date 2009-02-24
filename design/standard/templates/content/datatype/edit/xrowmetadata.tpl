@@ -20,7 +20,7 @@
 <div class="block">
 
 <label>{'Googlemap'|i18n( 'design/standard/class/datatype' )}:</label>
-<select id="ezcoa-{if ne( $attribute_base, 'ContentObjectAttribute' )}{$attribute_base}-{/if}{$attribute.contentclassattribute_id}_{$attribute.contentclass_attribute_identifier}_keywords" class="ezcc-{$attribute.object.content_class.identifier} ezcca-{$attribute.object.content_class.identifier}_{$attribute.contentclass_attribute_identifier}" name="{$attribute_base}_xrowmetadata_data_array_{$attribute.id}[googlesitemap]" size="1">
+<select id="ezcoa-{if ne( $attribute_base, 'ContentObjectAttribute' )}{$attribute_base}-{/if}{$attribute.contentclassattribute_id}_{$attribute.contentclass_attribute_identifier}_keywords" class="ezcc-{$attribute.object.content_class.identifier} ezcca-{$attribute.object.content_class.identifier}_{$attribute.contentclass_attribute_identifier}" name="{$attribute_base}_xrowmetadata_data_array_{$attribute.id}[googlemap]" size="1">
 <option value="0" {if ne($attribute.content.googlemap,'1')}selected{/if}>disabled</option>
 <option value="1" {if eq($attribute.content.googlemap,'1')}selected{/if}>enabled</option>
 </select>

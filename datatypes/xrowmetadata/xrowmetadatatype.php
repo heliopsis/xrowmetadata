@@ -104,7 +104,6 @@ class xrowMetaDataType extends eZDataType
         $xmldom->appendChild( $node );
         $xml->appendChild( $xmldom );
         $attribute->setAttribute( 'data_text', $xml->saveXML() );
-
     }
 
     function storeClassAttribute( $attribute, $version )
@@ -199,7 +198,7 @@ class xrowMetaDataType extends eZDataType
     function hasObjectAttributeContent( $contentObjectAttribute )
     {
     	$meta = self::fetchMetaData( $contentObjectAttribute );
-    	if ( $contentObjectAttribute instanceof xrowMetaData ) {
+    	if ( $meta instanceof xrowMetaData ) {
     		return true;
     	}
     	else

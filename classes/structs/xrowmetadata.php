@@ -13,9 +13,31 @@ class xrowMetaData extends ezcBaseStruct
         $this->title = $title;
         $this->keywords = $keywords;
         $this->description = $description;
-        $this->priority = $priority;
-        $this->change = $change;
+        if ( empty( $priority ) )
+        {
+            $this->priority = '0.5';
+        }
+        else
+        {
+        	$this->priority = $priority;
+        }
+        if ( empty( $change ) )
+        {
+            $this->change = 'daily';
+        }
+        else
+        {
+            $this->change = $change;
+        }
         if ( $googlemap === false )
+        {
+            $this->googlemap = '1';
+        }
+        elseif ( empty( $googlemap ) )
+        {
+        	$this->googlemap = '0';
+        }
+        else
         {
         	$this->googlemap = '1';
         }

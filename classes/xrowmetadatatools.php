@@ -3,7 +3,7 @@
 class xrowMetaDataFunctions
 {
 
-    function fetchByObject( eZContentObject $object )
+    static function fetchByObject( eZContentObject $object )
     {
         $attributes = $object->fetchDataMap();
         foreach ( $attributes as $attribute )

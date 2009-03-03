@@ -34,7 +34,6 @@ class xrowMetaDataOperator
         {
             case 'metadata':
                 {
-                    var_dump($namedParameters);
                     if ( isset( $namedParameters['node_id'] ) )
                     {
                         $node = eZContentObjectTreeNode::fetch( $namedParameters['node_id'] );

@@ -106,14 +106,6 @@ class xrowMetaDataType extends eZDataType
         $attribute->setAttribute( 'data_text', $xml->saveXML() );
     }
 
-    function storeClassAttribute( $attribute, $version )
-    {
-    }
-
-    function storeDefinedClassAttribute( $attribute )
-    {
-    }
-
     /*!
      \reimp
     */

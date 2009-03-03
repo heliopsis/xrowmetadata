@@ -3,9 +3,9 @@
 [SiteAccessSettings]
 # here you need to specify every siteaccess a sitemap shall be created for
 # if no siteaccessarray is given, the default siteaccess will be used for generation
-# SiteAccessArray[]
-# SiteAccessArray[]=de
-# SiteAccessArray[]=en
+# AvailableSiteAccessList[]
+# AvailableSiteAccessList[]=de
+# AvailableSiteAccessList[]=en
 
 [Classes]
 # include or exclude objects of classes listed in ClassFilterArray

@@ -21,9 +21,9 @@ else
 }
 
 //getting custom set site access or default access
-if ( $googlesitemapsINI->hasVariable( 'SiteAccessSettings', 'SiteAccessArray' ) )
+if ( $googlesitemapsINI->hasVariable( 'SiteAccessSettings', 'AvailableSiteAccessList' ) )
 {
-    $siteAccessArray = $googlesitemapsINI->variable( 'SiteAccessSettings', 'SiteAccessArray' );
+    $siteAccessArray = $googlesitemapsINI->variable( 'SiteAccessSettings', 'AvailableSiteAccessList' );
 }
 else
 {
@@ -42,7 +42,7 @@ foreach ( $siteAccessArray as $siteAccess )
     {
         array_push( $languages, array( 
             'siteaccess' => $siteAccess , 
-            'locale' => $specificINI->variable( 'RegionalSettings', 'Locale' ) , 
+            'locale' => $specificINI->variable( 'RegionalSettings', 'ContentObjectLocale' ) , 
             'siteurl' => $specificINI->variable( 'SiteSettings', 'SiteURL' ) 
         ) );
     }
@@ -57,11 +57,11 @@ foreach ( $languages as $language )
     $siteURL = $language['siteurl'];
     
     // Get the Sitemap's root node
-    $rootNode = eZContentObjectTreeNode::fetch( eZINI::instance( 'content.ini' )->variable( 'NodeSettings', 'RootNode' ), $language['locale'] );
+    $rootNode = eZContentObjectTreeNode::fetch( eZINI::instance( 'content.ini' )->variable( 'NodeSettings', 'RootNode' ) );
     
     if ( !$rootNode instanceof eZContentObjectTreeNode )
     {
-        $cli->output( "Invalid SitemapRootNodeID in configuration block GeneralSettings.\n" );
+        $cli->output( "Invalid RootNode.\n" );
         return;
     }
     

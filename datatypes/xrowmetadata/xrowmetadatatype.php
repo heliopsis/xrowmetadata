@@ -136,7 +136,7 @@ class xrowMetaDataType extends eZDataType
     	try
     	{
     	   $xml = new SimpleXMLElement( $attribute->attribute( 'data_text' ) );
-    	   $meta = new xrowMetaData( $xml->title, $xml->keywords, $xml->description, $xml->priority, $xml->change, $xml->googlemap );
+    	   $meta = new xrowMetaData( (string)$xml->title, (string)$xml->keywords, (string)$xml->description, (string)$xml->priority, (string)$xml->change, (string)$xml->googlemap );
            return $meta;
     	}
     	catch ( Exception $e )

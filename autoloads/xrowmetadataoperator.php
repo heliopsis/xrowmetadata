@@ -37,7 +37,14 @@ class xrowMetaDataOperator
                     if ( isset( $namedParameters['node_id'] ) )
                     {
                         $node = eZContentObjectTreeNode::fetch( $namedParameters['node_id'] );
-                        $operatorValue = xrowMetaDataFunctions::fetchByObject( $node->attribute( 'object' ) );
+                        if( $node instanceof eZContentObjectTreeNode )
+                        {
+                            $operatorValue = xrowMetaDataFunctions::fetchByObject( $node->attribute( 'object' ) );
+                        }
+                        else
+                        {
+                            $operatorValue = false;
+                        }
                     }
                 }
                 break;

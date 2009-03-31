@@ -1,5 +1,5 @@
 <?php
-
+require_once "access.php";
 if ( ! $isQuiet )
 {
     $cli->output( "Generating Sitemap...\n" );
@@ -65,12 +65,13 @@ foreach ( $languages as $language )
         return;
     }
     
-    require_once "access.php";
+    /* Change the siteaccess */
     $access = changeAccess( array( 
         "name" => $language["siteaccess"] , 
         "type" => EZ_ACCESS_TYPE_URI 
     ) );
-    
+    unset( $GLOBALS['eZContentObjectDefaultLanguage'] );
+    eZContentLanguage::expireCache();
     // Fetch the content tree
     $nodeArray = $rootNode->subTree( array( 
         'Language' => $language['locale'] , 

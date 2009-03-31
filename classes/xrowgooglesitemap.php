@@ -17,7 +17,7 @@ class xrowGoogleSiteMap
         
         // Create DOM-Root (urlset)
         $this->root = $this->dom->createElement( 'urlset' );
-        $this->root->setAttribute( "xmlns", "http://www.google.com/schemas/sitemap/0.84" );
+        $this->root->setAttribute( "xmlns", "http://www.sitemaps.org/schemas/sitemap/0.9" );
         $this->root->setAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
         $this->root->setAttribute( "xsi:schemaLocation", "http://www.google.com/schemas/sitemap/0.84 http://www.google.com/schemas/sitemap/0.84/sitemap.xsd" );
         $this->dom->appendChild( $this->root );

@@ -54,6 +54,7 @@ foreach ( $languages as $language )
     {
         $cli->output( "Generating Sitemap for Siteaccess " . $language["siteaccess"] . " \n" );
     }
+
     $siteURL = $language['siteurl'];
     
     // Get the Sitemap's root node
@@ -95,16 +96,16 @@ foreach ( $languages as $language )
         }
     }
     // write XML Sitemap to file
-    #$dir = eZSys::storageDirectory() . '/sitemap/';
-    #mkdir( eZSys::storageDirectory() . '/sitemap', 0777, true );
+    $dir = eZSys::storageDirectory() . '/sitemap';
+    mkdir( $dir, 0777, true );
 
     if ( count( $languages ) != 1 )
     {
-        $filename =  xrowGoogleSiteMap::BASENAME . '_' . $language['siteaccess'] . '.' . xrowGoogleSiteMap::SUFFIX;
+        $filename =  $dir . '/' . xrowGoogleSiteMap::BASENAME . '_' . $language['siteaccess'] . '.' . xrowGoogleSiteMap::SUFFIX;
     }
     else
     {
-    	$filename =  xrowGoogleSiteMap::BASENAME . '.' . xrowGoogleSiteMap::SUFFIX;
+    	$filename =  $dir . '/' . xrowGoogleSiteMap::BASENAME . '.' . xrowGoogleSiteMap::SUFFIX;
     }
     $sitemap->save( $filename );
     

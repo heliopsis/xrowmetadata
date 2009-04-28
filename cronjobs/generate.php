@@ -3,7 +3,7 @@ require_once "access.php";
 if ( ! $isQuiet )
 {
     $cli->output( "Generating Sitemap...\n" );
-}   
+}
 // Get a reference to eZINI. append.php will be added automatically.
 $ini = eZINI::instance( 'site.ini' );
 $googlesitemapsINI = eZINI::instance( 'googlesitemaps.ini' );
@@ -54,13 +54,21 @@ foreach ( $languages as $language )
     {
         $cli->output( "Generating Sitemap for Siteaccess " . $language["siteaccess"] . " \n" );
     }
-
-    $siteURL = $language['siteurl'];
     
+    $siteURL = $language['siteurl'];
+    $domain = preg_split( '/[\/\:]/i', $siteURL, 2 );
+    if ( is_array( $domain ) )
+    {
+        $domain = $domain[0];
+    }
+    else
+    {
+        $domain = $siteURL;
+    }
     // Get the Sitemap's root node
     $rootNode = eZContentObjectTreeNode::fetch( eZINI::instance( 'content.ini' )->variable( 'NodeSettings', 'RootNode' ) );
     
-    if ( !$rootNode instanceof eZContentObjectTreeNode )
+    if ( ! $rootNode instanceof eZContentObjectTreeNode )
     {
         $cli->output( "Invalid RootNode.\n" );
         return;
@@ -80,35 +88,33 @@ foreach ( $languages as $language )
         'ClassFilterArray' => $classFilterArray 
     ) );
     
-
-    $sitemap = new xrowGoogleSiteMap();
-
+    $sitemap = new xrowGoogleSiteMap( );
+    
     // Generate Sitemap
     foreach ( $nodeArray as $subTreeNode )
     {
-    	$object = $subTreeNode->object();
+        $object = $subTreeNode->object();
         $meta = xrowMetaDataFunctions::fetchByObject( $object );
         
         if ( $meta->googlemap != '0' )
         {
-        	$url = 'http://' . $siteURL . '/' . $subTreeNode->attribute( 'url_alias' );
+            $url = 'http://' . $domain . '/' . $language["siteaccess"] . '/' . $subTreeNode->attribute( 'url_alias' );
             $sitemap->add( $url, $object->attribute( 'modified' ), $meta->change, $meta->priority );
         }
     }
     // write XML Sitemap to file
     $dir = eZSys::storageDirectory() . '/sitemap';
     mkdir( $dir, 0777, true );
-
+    
     if ( count( $languages ) != 1 )
     {
-        $filename =  $dir . '/' . xrowGoogleSiteMap::BASENAME . '_' . $language['siteaccess'] . '.' . xrowGoogleSiteMap::SUFFIX;
+        $filename = $dir . '/' . xrowGoogleSiteMap::BASENAME . '_' . $language['siteaccess'] . '.' . xrowGoogleSiteMap::SUFFIX;
     }
     else
     {
-    	$filename =  $dir . '/' . xrowGoogleSiteMap::BASENAME . '.' . xrowGoogleSiteMap::SUFFIX;
+        $filename = $dir . '/' . xrowGoogleSiteMap::BASENAME . '.' . xrowGoogleSiteMap::SUFFIX;
     }
     $sitemap->save( $filename );
-    
     
     if ( ! $isQuiet )
     {

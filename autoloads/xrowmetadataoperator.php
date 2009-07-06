@@ -5,8 +5,8 @@ class xrowMetaDataOperator
 
     function operatorList()
     {
-        return array( 
-            'metadata' 
+        return array(
+            'metadata'
         );
     }
 
@@ -17,14 +17,14 @@ class xrowMetaDataOperator
 
     function namedParameterList()
     {
-        return array( 
-            'metadata' => array( 
-                'node_id' => array( 
-                    'type' => 'int' , 
-                    'required' => true , 
-                    'default' => null 
-                ) 
-            ) 
+        return array(
+            'metadata' => array(
+                'node_id' => array(
+                    'type' => 'int' ,
+                    'required' => true ,
+                    'default' => null
+                )
+            )
         );
     }
 
@@ -33,21 +33,24 @@ class xrowMetaDataOperator
         switch ( $operatorName )
         {
             case 'metadata':
+            {
+                if ( isset( $namedParameters['node_id'] ) )
                 {
-                    if ( isset( $namedParameters['node_id'] ) )
+                    $node = eZContentObjectTreeNode::fetch( $namedParameters['node_id'] );
+                    if( $node instanceof eZContentObjectTreeNode )
                     {
-                        $node = eZContentObjectTreeNode::fetch( $namedParameters['node_id'] );
-                        if( $node instanceof eZContentObjectTreeNode )
-                        {
-                            $operatorValue = xrowMetaDataFunctions::fetchByObject( $node->attribute( 'object' ) );
-                        }
-                        else
-                        {
-                            $operatorValue = false;
-                        }
+                        $operatorValue = xrowMetaDataFunctions::fetchByObject( $node->attribute( 'object' ) );
+                    }
+                    else
+                    {
+                        $operatorValue = false;
                     }
                 }
-                break;
+                else
+                {
+                    $operatorValue = false;
+                }
+            }break;
         }
     }
 }

@@ -34,10 +34,10 @@ else
 
 //fetching all language codes
 $languages = array();
-
+$allDomains = array();
 foreach ( $siteAccessArray as $siteAccess )
 {
-    $specificINI = eZINI::instance( 'site.ini.append.php', 'settings/siteaccess/' . $siteAccess );
+    $specificINI = eZINI::instance( 'site.ini.append.php', 'settings/siteaccess/' . $siteAccess, true, false, false, true );
     if ( $specificINI->hasVariable( 'RegionalSettings', 'Locale' ) )
     {
         array_push( $languages, array( 
@@ -45,8 +45,18 @@ foreach ( $siteAccessArray as $siteAccess )
             'locale' => $specificINI->variable( 'RegionalSettings', 'ContentObjectLocale' ) , 
             'siteurl' => $specificINI->variable( 'SiteSettings', 'SiteURL' ) 
         ) );
+    $domain = preg_split( '/[\/\:]/i', $specificINI->variable( 'SiteSettings', 'SiteURL' ), 2 );
+    if ( is_array( $domain ) )
+    {                  
+        $allDomains[] = $domain[0];             
+    }
+    else
+    {
+        $allDomains[] = $siteURL;
+    } 
     }
 }
+$allDomains = array_unique( $allDomains );
 
 foreach ( $languages as $language )
 {
@@ -89,7 +99,6 @@ foreach ( $languages as $language )
     ) );
     
     $sitemap = new xrowGoogleSiteMap( );
-    
     // Generate Sitemap
     foreach ( $nodeArray as $subTreeNode )
     {
@@ -98,7 +107,14 @@ foreach ( $languages as $language )
         
         if ( $meta->googlemap != '0' )
         {
-            $url = 'http://' . $domain . '/' . $language["siteaccess"] . '/' . $subTreeNode->attribute( 'url_alias' );
+	    if ( count( $allDomains ) != 1 and in_array( $domain, $allDomains ) )
+{
+$url = 'http://' . $domain . '/' . $subTreeNode->attribute( 'url_alias' );
+}
+else
+{
+$url = 'http://' . $domain . '/' . $language["siteaccess"] . '/' . $subTreeNode->attribute( 'url_alias' );
+}
             $sitemap->add( $url, $object->attribute( 'modified' ), $meta->change, $meta->priority );
         }
     }

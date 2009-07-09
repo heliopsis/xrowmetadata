@@ -2,19 +2,19 @@
 
 <div class="block">
 <label>{'Title'|i18n( 'design/standard/class/datatype' )}:</label>
-<input id="ezcoa-{if ne( $attribute_base, 'ContentObjectAttribute' )}{$attribute_base}-{/if}{$attribute.contentclassattribute_id}_{$attribute.contentclass_attribute_identifier}_title" class="ezcc-{$attribute.object.content_class.identifier} ezcca-{$attribute.object.content_class.identifier}_{$attribute.contentclass_attribute_identifier}" type="text" name="{$attribute_base}_xrowmetadata_data_array_{$attribute.id}[title]" size="100" maxsize="255" value="{$attribute.content.title|wash()}" />
+<input id="ezcoa-{if ne( $attribute_base, 'ContentObjectAttribute' )}{$attribute_base}-{/if}{$attribute.contentclassattribute_id}_{$attribute.contentclass_attribute_identifier}_title" class="box ezcc-{$attribute.object.content_class.identifier} ezcca-{$attribute.object.content_class.identifier}_{$attribute.contentclass_attribute_identifier}" type="text" name="{$attribute_base}_xrowmetadata_data_array_{$attribute.id}[title]" size="100" maxsize="255" value="{$attribute.content.title|wash()}" />
 </div>
 
 <div class="block">
 
 <label>{'Description'|i18n( 'design/standard/class/datatype' )}:</label>
-<input id="ezcoa-{if ne( $attribute_base, 'ContentObjectAttribute' )}{$attribute_base}-{/if}{$attribute.contentclassattribute_id}_{$attribute.contentclass_attribute_identifier}_description" class="ezcc-{$attribute.object.content_class.identifier} ezcca-{$attribute.object.content_class.identifier}_{$attribute.contentclass_attribute_identifier}" type="text" name="{$attribute_base}_xrowmetadata_data_array_{$attribute.id}[description]" size="100" maxsize="255" value="{$attribute.content.description|wash()}" />
+<input id="ezcoa-{if ne( $attribute_base, 'ContentObjectAttribute' )}{$attribute_base}-{/if}{$attribute.contentclassattribute_id}_{$attribute.contentclass_attribute_identifier}_description" class="box ezcc-{$attribute.object.content_class.identifier} ezcca-{$attribute.object.content_class.identifier}_{$attribute.contentclass_attribute_identifier}" type="text" name="{$attribute_base}_xrowmetadata_data_array_{$attribute.id}[description]" size="100" maxsize="255" value="{$attribute.content.description|wash()}" />
 </div>
 
 <div class="block">
 
 <label>{'Keywords'|i18n( 'design/standard/class/datatype' )}:</label>
-<input id="ezcoa-{if ne( $attribute_base, 'ContentObjectAttribute' )}{$attribute_base}-{/if}{$attribute.contentclassattribute_id}_{$attribute.contentclass_attribute_identifier}_keywords" class="ezcc-{$attribute.object.content_class.identifier} ezcca-{$attribute.object.content_class.identifier}_{$attribute.contentclass_attribute_identifier}" type="text" name="{$attribute_base}_xrowmetadata_data_array_{$attribute.id}[keywords]" size="100" maxsize="1055" value="{$attribute.content.keywords|wash()}" />
+<input id="ezcoa-{if ne( $attribute_base, 'ContentObjectAttribute' )}{$attribute_base}-{/if}{$attribute.contentclassattribute_id}_{$attribute.contentclass_attribute_identifier}_keywords" class="box ezcc-{$attribute.object.content_class.identifier} ezcca-{$attribute.object.content_class.identifier}_{$attribute.contentclass_attribute_identifier}" type="text" name="{$attribute_base}_xrowmetadata_data_array_{$attribute.id}[keywords]" size="100" maxsize="1055" value="{$attribute.content.keywords|wash()}" />
 </div>
 
 <div class="block">

@@ -27,8 +27,8 @@ if ( $googlesitemapsINI->hasVariable( 'SiteAccessSettings', 'AvailableSiteAccess
 }
 else
 {
-    $siteAccessArray = array( 
-        $ini->variable( 'SiteSettings', 'DefaultAccess' ) 
+    $siteAccessArray = array(
+        $ini->variable( 'SiteSettings', 'DefaultAccess' )
     );
 }
 
@@ -40,20 +40,20 @@ foreach ( $siteAccessArray as $siteAccess )
     $specificINI = eZINI::instance( 'site.ini.append.php', 'settings/siteaccess/' . $siteAccess, true, false, false, true );
     if ( $specificINI->hasVariable( 'RegionalSettings', 'Locale' ) )
     {
-        array_push( $languages, array( 
-            'siteaccess' => $siteAccess , 
-            'locale' => $specificINI->variable( 'RegionalSettings', 'ContentObjectLocale' ) , 
-            'siteurl' => $specificINI->variable( 'SiteSettings', 'SiteURL' ) 
+        array_push( $languages, array(
+            'siteaccess' => $siteAccess ,
+            'locale' => $specificINI->variable( 'RegionalSettings', 'ContentObjectLocale' ) ,
+            'siteurl' => $specificINI->variable( 'SiteSettings', 'SiteURL' )
         ) );
-    $domain = preg_split( '/[\/\:]/i', $specificINI->variable( 'SiteSettings', 'SiteURL' ), 2 );
-    if ( is_array( $domain ) )
-    {                  
-        $allDomains[] = $domain[0];             
-    }
-    else
-    {
-        $allDomains[] = $siteURL;
-    } 
+        $domain = preg_split( '/[\/\:]/i', $specificINI->variable( 'SiteSettings', 'SiteURL' ), 2 );
+        if ( is_array( $domain ) )
+        {
+            $allDomains[] = $domain[0];
+        }
+        else
+        {
+            $allDomains[] = $siteURL;
+        }
     }
 }
 $allDomains = array_unique( $allDomains );
@@ -64,7 +64,7 @@ foreach ( $languages as $language )
     {
         $cli->output( "Generating Sitemap for Siteaccess " . $language["siteaccess"] . " \n" );
     }
-    
+
     $siteURL = $language['siteurl'];
     $domain = preg_split( '/[\/\:]/i', $siteURL, 2 );
     if ( is_array( $domain ) )
@@ -77,51 +77,47 @@ foreach ( $languages as $language )
     }
     // Get the Sitemap's root node
     $rootNode = eZContentObjectTreeNode::fetch( eZINI::instance( 'content.ini' )->variable( 'NodeSettings', 'RootNode' ) );
-    
+
     if ( ! $rootNode instanceof eZContentObjectTreeNode )
     {
         $cli->output( "Invalid RootNode.\n" );
         return;
     }
-    
+
     /* Change the siteaccess */
-    $access = changeAccess( array( 
-        "name" => $language["siteaccess"] , 
-        "type" => EZ_ACCESS_TYPE_URI 
+    $access = changeAccess( array(
+        "name" => $language["siteaccess"] ,
+        "type" => EZ_ACCESS_TYPE_URI
     ) );
     unset( $GLOBALS['eZContentObjectDefaultLanguage'] );
     eZContentLanguage::expireCache();
     // Fetch the content tree
-    $nodeArray = $rootNode->subTree( array( 
-        'Language' => $language['locale'] , 
-        'ClassFilterType' => $classFilterType , 
-        'ClassFilterArray' => $classFilterArray 
+    $nodeArray = $rootNode->subTree( array(
+        'Language' => $language['locale'] ,
+        'ClassFilterType' => $classFilterType ,
+        'ClassFilterArray' => $classFilterArray
     ) );
-    
+
     $sitemap = new xrowGoogleSiteMap( );
     // Generate Sitemap
     foreach ( $nodeArray as $subTreeNode )
     {
         $object = $subTreeNode->object();
         $meta = xrowMetaDataFunctions::fetchByObject( $object );
-        
+
         if ( $meta->googlemap != '0' )
         {
-	    if ( count( $allDomains ) != 1 and in_array( $domain, $allDomains ) )
-{
-$url = 'http://' . $domain . '/' . $subTreeNode->attribute( 'url_alias' );
-}
-else
-{
-$url = 'http://' . $domain . '/' . $language["siteaccess"] . '/' . $subTreeNode->attribute( 'url_alias' );
-}
+    	    $url = $subTreeNode->attribute( 'url_alias' );
+            eZURI::transformURI( $url, false, 'full' );
+            $url = 'http://' . $domain . $url;
+
             $sitemap->add( $url, $object->attribute( 'modified' ), $meta->change, $meta->priority );
         }
     }
     // write XML Sitemap to file
     $dir = eZSys::storageDirectory() . '/sitemap';
     mkdir( $dir, 0777, true );
-    
+
     if ( count( $languages ) != 1 )
     {
         $filename = $dir . '/' . xrowGoogleSiteMap::BASENAME . '_' . $language['siteaccess'] . '.' . xrowGoogleSiteMap::SUFFIX;
@@ -131,7 +127,7 @@ $url = 'http://' . $domain . '/' . $language["siteaccess"] . '/' . $subTreeNode-
         $filename = $dir . '/' . xrowGoogleSiteMap::BASENAME . '.' . xrowGoogleSiteMap::SUFFIX;
     }
     $sitemap->save( $filename );
-    
+
     if ( ! $isQuiet )
     {
         $cli->output( "Sitemap $filename for siteaccess " . $language['siteaccess'] . " (language code " . $language['locale'] . ") has been generated!\n\n" );

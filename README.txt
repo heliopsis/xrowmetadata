@@ -36,6 +36,24 @@ Finally you need to attached the Metadatatype to some of your content classes an
     {/foreach}
 {/if}
 
+Register sitemap in robots.txt:
+
+Option 1.)
+    Add this to the end of the "robots.txt" file
+  
+    ----------------
+    Sitemap: http://www.example.com/sitemaps/index
+    ----------------
+Option 2.)
+    Add this to the end of the ".htaccess" file
+    ----------------
+    RewriteRule ^robots\.txt$ - [C]
+    RewriteRule .* http://%{HTTP_HOST}/sitemaps/robots [P]
+    
+    RewriteRule ^sitemap\.xml$ - [C]
+    RewriteRule .* http://%{HTTP_HOST}/sitemaps/index [P]
+    ----------------
+
 Troubleshooting & support
 =========================
 Send email to service [at] xrow [dot] de

@@ -115,7 +115,7 @@ foreach ( $languages as $language )
         }
     }
     // write XML Sitemap to file
-    $dir = eZSys::storageDirectory() . '/sitemap';
+    $dir = eZSys::storageDirectory() . '/sitemap/' . $domain;
     mkdir( $dir, 0777, true );
 
     if ( count( $languages ) != 1 )

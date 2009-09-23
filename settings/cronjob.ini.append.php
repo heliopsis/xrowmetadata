@@ -1,6 +1,6 @@
 <?php /*
 
-[CronjobPart-googlesitemaps]
+[CronjobPart-sitemaps]
 Scripts[]
 Scripts[]=generate.php
 

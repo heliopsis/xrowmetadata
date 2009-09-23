@@ -26,7 +26,7 @@ foreach ( $dir as $file2 )
             }
             $dt = new DateTime( "@" . $file->getMTime() );
             $sitemap = $dom->createElement( 'sitemap' );
-            $loc = $dom->createElement( 'loc', $dirname . '/' . $file2->getFilename() . '/' . $file->getFilename() );
+            $loc = $dom->createElement( 'loc', 'http://' . $_SERVER['HTTP_HOST'] . '/' . $dirname . '/' . $file2->getFilename() . '/' . $file->getFilename() );
             $lastmod = $dom->createElement( 'lastmod', $dt->format( DateTime::W3C ) );
             $sitemap->appendChild( $loc );
             $sitemap->appendChild( $lastmod );

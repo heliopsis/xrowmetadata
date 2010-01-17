@@ -23,23 +23,41 @@ class xrowGoogleSiteMap
         $this->dom->appendChild( $this->root );
     }
 
-    function add( $url, $modified, $change = false, $priority = false )
+    /**
+     * Add a new child to the sitemap
+     *
+     * @param string $url
+     * @param int $modified
+     * @param string $change
+     * @param string $priority
+     */
+    function add( $url, $modified, $frequency = null, $priority = null )
     {
-        $modified = date( "c", $modified );
-        
+        if ( trim( $url ) == "" )
+        {
+        	return;
+        }
+        $search = array( '&amp;', '&', "'", '"', '>', '<' );
+        $replace = array( '&', '&amp;', '&apos;', '&quot;', '&gt;', '&lt;' );
+        $url = str_replace( $search, $replace, $url );
+                
         $node = $this->dom->createElement( "url" );
         $subNode = $this->dom->createElement( 'loc', $url );
         $node->appendChild( $subNode );
-        $date = $this->dom->createTextNode( $urlAlias );
-        $subNode->appendChild( $date );
-        $subNode = $this->dom->createElement( 'lastmod', $modified );
-        $node->appendChild( $subNode );
         
-        if ( isset( $change ) )
+        if ( isset( $modified ) )
         {
-            $subNode = $this->dom->createElement( 'changefreq', $change );
+	        $modified = date( "c", $modified );
+	        $subNode = $this->dom->createElement( 'lastmod', $modified );
+	        $node->appendChild( $subNode );
+        }
+        
+        if ( isset( $frequency ) )
+        {
+            $subNode = $this->dom->createElement( 'changefreq', $frequency );
             $node->appendChild( $subNode );
         }
+        
         if ( isset( $priority ) )
         {
             $subNode = $this->dom->createElement( 'priority', $priority );
@@ -53,7 +71,6 @@ class xrowGoogleSiteMap
     {
         return $this->dom->save( $filename );
     }
-
 }
 
 ?>

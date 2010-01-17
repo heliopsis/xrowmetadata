@@ -1,6 +1,6 @@
 <?php
 require_once "access.php";
-if ( ! $isQuiet )
+if ( !$isQuiet )
 {
     $cli->output( "Generating Sitemap...\n" );
 }
@@ -113,12 +113,21 @@ foreach ( $languages as $language )
         $output = new ezcConsoleOutput();
         $bar = new ezcConsoleProgressbar( $output, $nodeArrayCount );
     }
+    
+    $addPrio = false;
+    if ( $googlesitemapsINI->variable( 'SiteMapSettings', 'AddPriorityToSubtree' ) == 'true' )
+    {
+    	$addPrio = true;
+    }
 
-    $sitemap = new xrowGoogleSiteMap( );
+    $sitemap = new xrowGoogleSiteMap();
     // Generate Sitemap
     // Adding the root node
     $object = $rootNode->object();
     $meta = xrowMetaDataFunctions::fetchByObject( $object );
+    
+    $modified = $rootNode->attribute( 'modified_subnode' );
+    
     if ( $meta
          AND $meta->googlemap != '0' )
     {
@@ -126,11 +135,24 @@ foreach ( $languages as $language )
         eZURI::transformURI( $url, false, 'full' );
         $url = 'http://' . $domain . $url;
 
-        $sitemap->add( $url, $object->attribute( 'modified' ), $meta->change, $meta->priority );
+        $sitemap->add( $url, $modified, $meta->change, $meta->priority );
     }
     else
     {
-        $sitemap->add( $url, $object->attribute( 'modified' ), null, null );
+        if ( $addPrio )
+        {
+        	$rootDepth = $rootNode->attribute( 'depth' );
+        	$prio = 1;
+        }
+        else 
+        {
+        	$prio = null;
+        }
+    	
+    	$url = $rootNode->attribute( 'url_alias' );
+        eZURI::transformURI( $url, false, 'full' );
+        $url = 'http://' . $domain . $url;
+    	$sitemap->add( $url, $modified, null, $prio );
     }
     if ( isset( $bar ) )
     {
@@ -141,7 +163,8 @@ foreach ( $languages as $language )
     {
         $object = $subTreeNode->object();
         $meta = xrowMetaDataFunctions::fetchByObject( $object );
-
+        $modified = $subTreeNode->attribute( 'modified_subnode' );
+        
         if ( $meta
              AND $meta->googlemap != '0' )
         {
@@ -149,11 +172,29 @@ foreach ( $languages as $language )
             eZURI::transformURI( $url, false, 'full' );
             $url = 'http://' . $domain . $url;
 
-            $sitemap->add( $url, $object->attribute( 'modified' ), $meta->change, $meta->priority );
+            $sitemap->add( $url, $modified, $meta->change, $meta->priority );
         }
         else
         {
-            $sitemap->add( $url, $object->attribute( 'modified' ), null, null );
+            $url = $subTreeNode->attribute( 'url_alias' );
+            eZURI::transformURI( $url, false, 'full' );
+            $url = 'http://' . $domain . $url;
+        	
+        	
+	        if ( $addPrio )
+	        {
+	            $rootDepth = $rootNode->attribute( 'depth' );
+	            $prio = 1 - ( ( $subTreeNode->attribute( 'depth' ) - $rootDepth  ) / 10 );
+	            if ( $prio <= 0 )
+	            {
+	            	$prio = null;
+	            }
+	        }
+	        else 
+	        {
+	            $prio = null;
+	        }
+	        $sitemap->add( $url, $modified, null, $prio );
         }
 
         if ( isset( $bar ) )
@@ -161,6 +202,55 @@ foreach ( $languages as $language )
             $bar->advance();
         }
     }
+    
+    if ( !$isQuiet )
+    {
+    	$cli->output();
+    	$cli->output( 'Adding manual items' );
+    }
+    
+    $manualItems = $googlesitemapsINI->variable( 'SiteMapSettings', 'AddUrlArray' );
+    $manualPriority = $googlesitemapsINI->variable( 'SiteMapSettings', 'AddPriorityArray' );
+    $manualFrequency = $googlesitemapsINI->variable( 'SiteMapSettings', 'AddFrequencyArray' );
+    $itemCount = count( $manualItems );
+    
+    if ( !$isQuiet )
+    {
+    	$cli->output( "Found $itemCount entries" );
+    	$output = new ezcConsoleOutput();
+    	$bar = new ezcConsoleProgressbar( $output, $itemCount );
+    }
+    
+    foreach ( $manualItems as $mKey => $mItem )
+    {
+        $url = $mItem;
+        $url = 'http://' . $domain . $url;
+        
+        if ( isset( $manualPriority[$mKey] ) )
+        {
+        	$prio = $manualPriority[$mKey];
+        }
+        else 
+        {
+        	$prio = null;
+        }
+        
+        if ( isset( $manualFrequency[$mKey] ) )
+        {
+            $freq = $manualFrequency[$mKey];
+        }
+        else 
+        {
+            $freq = null;
+        }
+        
+        $sitemap->add( $url, null, $freq, $prio );
+    	if ( isset( $bar ) )
+        {
+            $bar->advance();
+        }
+    }
+    
     // write XML Sitemap to file
     $dir = eZSys::storageDirectory() . '/sitemap/' . $domain;
     mkdir( $dir, 0777, true );

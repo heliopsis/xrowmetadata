@@ -130,7 +130,7 @@ foreach ( $languages as $language )
     }
     else
     {
-        $sitemap->add( $url, $object->attribute( 'modified' ) );
+        $sitemap->add( $url, $object->attribute( 'modified' ), null, null );
     }
     if ( isset( $bar ) )
     {
@@ -153,7 +153,7 @@ foreach ( $languages as $language )
         }
         else
         {
-            $sitemap->add( $url, $object->attribute( 'modified' ) );
+            $sitemap->add( $url, $object->attribute( 'modified' ), null, null );
         }
 
         if ( isset( $bar ) )

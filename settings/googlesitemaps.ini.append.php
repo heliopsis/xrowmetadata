@@ -19,4 +19,7 @@ ClassFilterArray[]
 #ClassFilterArray[]=forum
 #ClassFilterArray[]=...
 
+[SiteMapSettings]
+# Use gzip to compress the sitemap
+Gzip=disabled
 */ ?>

@@ -9,7 +9,9 @@ $ini = eZINI::instance( 'site.ini' );
 $googlesitemapsINI = eZINI::instance( 'googlesitemaps.ini' );
 
 // Settings variables
-if ( $googlesitemapsINI->hasVariable( 'Classes', 'ClassFilterType' ) && $googlesitemapsINI->hasVariable( 'Classes', 'ClassFilterArray' ) && $ini->hasVariable( 'SiteSettings', 'SiteURL' ) )
+if ( $googlesitemapsINI->hasVariable( 'Classes', 'ClassFilterType' )
+     AND $googlesitemapsINI->hasVariable( 'Classes', 'ClassFilterArray' )
+     AND $ini->hasVariable( 'SiteSettings', 'SiteURL' ) )
 {
     $classFilterType = $googlesitemapsINI->variable( 'Classes', 'ClassFilterType' );
     $classFilterArray = $googlesitemapsINI->variable( 'Classes', 'ClassFilterArray' );
@@ -38,7 +40,7 @@ $allDomains = array();
 foreach ( $siteAccessArray as $siteAccess )
 {
     $specificINI = eZINI::instance( 'site.ini.append.php', 'settings/siteaccess/' . $siteAccess, true, false, false, true );
-    if ( $specificINI->hasVariable( 'RegionalSettings', 'Locale' ) )
+    if ( $specificINI->hasVariable( 'RegionalSettings', 'ContentObjectLocale' ) )
     {
         array_push( $languages, array(
             'siteaccess' => $siteAccess ,
@@ -76,9 +78,10 @@ foreach ( $languages as $language )
         $domain = $siteURL;
     }
     // Get the Sitemap's root node
-    $rootNode = eZContentObjectTreeNode::fetch( eZINI::instance( 'content.ini' )->variable( 'NodeSettings', 'RootNode' ) );
+    $contentINI = eZINI::instance( 'content.ini' );
+    $rootNode = eZContentObjectTreeNode::fetch( $contentINI->variable( 'NodeSettings', 'RootNode' ) );
 
-    if ( ! $rootNode instanceof eZContentObjectTreeNode )
+    if ( !$rootNode instanceof eZContentObjectTreeNode )
     {
         $cli->output( "Invalid RootNode.\n" );
         return;
@@ -92,26 +95,70 @@ foreach ( $languages as $language )
     unset( $GLOBALS['eZContentObjectDefaultLanguage'] );
     eZContentLanguage::expireCache();
     // Fetch the content tree
-    $nodeArray = $rootNode->subTree( array(
+    $params = array(
         'Language' => $language['locale'] ,
-        'ClassFilterType' => $classFilterType ,
-        'ClassFilterArray' => $classFilterArray
-    ) );
+        'ClassFilterType' => $classFilterType,
+        'ClassFilterArray' => $classFilterArray,
+        'Limit' => 49999, // max. amount of links in 1 sitemap
+        'Offset' => 0,
+        'SortBy' => array( array( 'depth', true ), array( 'published', true ) )
+    );
+    $nodeArray = $rootNode->subTree( $params );
+
+    $nodeArrayCount = count( $nodeArray ) + 1;
+
+    if ( !$isQuiet )
+    {
+        $cli->output( "Adding $nodeArrayCount nodes to the sitemap." );
+        $output = new ezcConsoleOutput();
+        $bar = new ezcConsoleProgressbar( $output, $nodeArrayCount );
+    }
 
     $sitemap = new xrowGoogleSiteMap( );
     // Generate Sitemap
+    // Adding the root node
+    $object = $rootNode->object();
+    $meta = xrowMetaDataFunctions::fetchByObject( $object );
+    if ( $meta
+         AND $meta->googlemap != '0' )
+    {
+        $url = $rootNode->attribute( 'url_alias' );
+        eZURI::transformURI( $url, false, 'full' );
+        $url = 'http://' . $domain . $url;
+
+        $sitemap->add( $url, $object->attribute( 'modified' ), $meta->change, $meta->priority );
+    }
+    else
+    {
+        $sitemap->add( $url, $object->attribute( 'modified' ) );
+    }
+    if ( isset( $bar ) )
+    {
+        $bar->advance();
+    }
+    // Adding tree
     foreach ( $nodeArray as $subTreeNode )
     {
         $object = $subTreeNode->object();
         $meta = xrowMetaDataFunctions::fetchByObject( $object );
 
-        if ( $meta->googlemap != '0' )
+        if ( $meta
+             AND $meta->googlemap != '0' )
         {
-    	    $url = $subTreeNode->attribute( 'url_alias' );
+            $url = $subTreeNode->attribute( 'url_alias' );
             eZURI::transformURI( $url, false, 'full' );
             $url = 'http://' . $domain . $url;
 
             $sitemap->add( $url, $object->attribute( 'modified' ), $meta->change, $meta->priority );
+        }
+        else
+        {
+            $sitemap->add( $url, $object->attribute( 'modified' ) );
+        }
+
+        if ( isset( $bar ) )
+        {
+            $bar->advance();
         }
     }
     // write XML Sitemap to file
@@ -128,8 +175,19 @@ foreach ( $languages as $language )
     }
     $sitemap->save( $filename );
 
+    if ( function_exists( 'gzencode' )
+         AND $googlesitemapsINI->variable( 'SiteMapSettings', 'Gzip' ) == 'enabled' )
+    {
+        $content = file_get_contents( $filename );
+        $content = gzencode( $content );
+        file_put_contents( $filename.'.gz', $content );
+        unlink( $filename );
+        $filename .= '.gz';
+    }
+
     if ( ! $isQuiet )
     {
+        $cli->output();
         $cli->output( "Sitemap $filename for siteaccess " . $language['siteaccess'] . " (language code " . $language['locale'] . ") has been generated!\n\n" );
     }
 }

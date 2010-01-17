@@ -28,7 +28,7 @@ class xrowGoogleSiteMap
      *
      * @param string $url
      * @param int $modified
-     * @param string $change
+     * @param string $frequency
      * @param string $priority
      */
     function add( $url, $modified, $frequency = null, $priority = null )

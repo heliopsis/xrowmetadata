@@ -39,7 +39,10 @@ $languages = array();
 $allDomains = array();
 foreach ( $siteAccessArray as $siteAccess )
 {
-    $specificINI = eZINI::instance( 'site.ini.append.php', 'settings/siteaccess/' . $siteAccess, true, false, false, true );
+    $old_access = $GLOBALS['eZCurrentAccess'];
+    changeAccess( array( 'name' => $siteAccess, 'type' => EZ_ACCESS_TYPE_URI ) );
+
+    $specificINI = eZINI::instance( 'site.ini' );
     if ( $specificINI->hasVariable( 'RegionalSettings', 'ContentObjectLocale' ) )
     {
         array_push( $languages, array(
@@ -57,6 +60,11 @@ foreach ( $siteAccessArray as $siteAccess )
             $allDomains[] = $siteURL;
         }
     }
+    else
+    {
+        $cli->output( "site.ini[RegionalSettings]ContentObjectLocale not found for siteaccess \"". $siteAccess . "\" \n" );
+    }
+    changeAccess( $old_access );
 }
 $allDomains = array_unique( $allDomains );
 

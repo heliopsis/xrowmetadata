@@ -87,6 +87,10 @@ class xrowMetaDataType extends eZDataType
     */
     function storeObjectAttribute( $attribute )
     {
+    	if( $attribute->ID === null )
+    	{
+    		eZPersistentObject::storeObject( $attribute );
+    	}
         $meta= $attribute->content();
         $xml = new DOMDocument( "1.0", "UTF-8" );
         $xmldom = $xml->createElement( "MetaData" );

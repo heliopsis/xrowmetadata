@@ -37,9 +37,9 @@ else
 //fetching all language codes
 $languages = array();
 $allDomains = array();
+$old_access = $GLOBALS['eZCurrentAccess'];
 foreach ( $siteAccessArray as $siteAccess )
 {
-    $old_access = $GLOBALS['eZCurrentAccess'];
     changeAccess( array( 'name' => $siteAccess, 'type' => EZ_ACCESS_TYPE_URI ) );
 
     $specificINI = eZINI::instance( 'site.ini' );
@@ -64,12 +64,18 @@ foreach ( $siteAccessArray as $siteAccess )
     {
         $cli->output( "site.ini[RegionalSettings]ContentObjectLocale not found for siteaccess \"". $siteAccess . "\" \n" );
     }
-    changeAccess( $old_access );
 }
 $allDomains = array_unique( $allDomains );
 
 foreach ( $languages as $language )
 {
+    /* Change the siteaccess */
+    $access = changeAccess( array(
+        "name" => $language["siteaccess"] ,
+        "type" => EZ_ACCESS_TYPE_URI
+    ) );
+    unset( $GLOBALS['eZContentObjectDefaultLanguage'] );
+    eZContentLanguage::expireCache();
     if ( ! $isQuiet )
     {
         $cli->output( "Generating Sitemap for Siteaccess " . $language["siteaccess"] . " \n" );
@@ -91,20 +97,12 @@ foreach ( $languages as $language )
 
     if ( !$rootNode instanceof eZContentObjectTreeNode )
     {
-        $cli->output( "Invalid RootNode.\n" );
-        return;
+        $cli->output( "Invalid RootNode for Siteaccess " . $language["siteaccess"] . " \n" );
+        continue;
     }
 
-    /* Change the siteaccess */
-    $access = changeAccess( array(
-        "name" => $language["siteaccess"] ,
-        "type" => EZ_ACCESS_TYPE_URI
-    ) );
-    unset( $GLOBALS['eZContentObjectDefaultLanguage'] );
-    eZContentLanguage::expireCache();
     // Fetch the content tree
     $params = array(
-        'Language' => $language['locale'] ,
         'ClassFilterType' => $classFilterType,
         'ClassFilterArray' => $classFilterArray,
         'Limit' => 49999, // max. amount of links in 1 sitemap
@@ -113,8 +111,12 @@ foreach ( $languages as $language )
     );
     $nodeArray = $rootNode->subTree( $params );
 
-    $nodeArrayCount = count( $nodeArray ) + 1;
 
+    $nodeArrayCount = count( $nodeArray ) + 1;
+    if ( $nodeArrayCount == 1 )
+    {
+        $cli->output( "No Items found under node #". $contentINI->variable( 'NodeSettings', 'RootNode' ). "." );
+    }
     if ( !$isQuiet )
     {
         $cli->output( "Adding $nodeArrayCount nodes to the sitemap." );
@@ -132,12 +134,12 @@ foreach ( $languages as $language )
     // Generate Sitemap
     // Adding the root node
     $object = $rootNode->object();
+    
     $meta = xrowMetaDataFunctions::fetchByObject( $object );
-
+    
     $modified = $rootNode->attribute( 'modified_subnode' );
 
-    if ( $meta
-         AND $meta->googlemap != '0' )
+    if ( $meta AND $meta->googlemap != '0' )
     {
         $url = $rootNode->attribute( 'url_alias' );
         eZURI::transformURI( $url, true, 'full' );
@@ -145,7 +147,7 @@ foreach ( $languages as $language )
 
         $sitemap->add( $url, $modified, $meta->change, $meta->priority );
     }
-    else
+    elseif ( $meta === false )
     {
         if ( $addPrio )
         {
@@ -169,14 +171,15 @@ foreach ( $languages as $language )
         $bar->advance();
     }
     // Adding tree
+
     foreach ( $nodeArray as $subTreeNode )
     {
+        eZContentLanguage::expireCache();
         $object = $subTreeNode->object();
         $meta = xrowMetaDataFunctions::fetchByObject( $object );
         $modified = $subTreeNode->attribute( 'modified_subnode' );
 
-        if ( $meta
-             AND $meta->googlemap != '0' )
+        if ( $meta AND $meta->googlemap != '0' )
         {
             $url = $subTreeNode->attribute( 'url_alias' );
             eZURI::transformURI( $url, true, 'full' );
@@ -184,7 +187,7 @@ foreach ( $languages as $language )
 
             $sitemap->add( $url, $modified, $meta->change, $meta->priority );
         }
-        else
+        elseif ( $meta === false )
         {
             $url = $subTreeNode->attribute( 'url_alias' );
             eZURI::transformURI( $url, true, 'full' );
@@ -290,4 +293,5 @@ foreach ( $languages as $language )
         $cli->output( "Sitemap $filename for siteaccess " . $language['siteaccess'] . " (language code " . $language['locale'] . ") has been generated!\n\n" );
     }
 }
+changeAccess( $old_access );
 ?>

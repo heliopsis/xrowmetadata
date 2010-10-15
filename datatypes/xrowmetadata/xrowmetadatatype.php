@@ -1,7 +1,5 @@
 ﻿<?php
 
-require_once ( 'kernel/common/i18n.php' );
-
 class xrowMetaDataType extends eZDataType
 {
     const DATA_TYPE_STRING = 'xrowmetadata';
@@ -80,7 +78,33 @@ class xrowMetaDataType extends eZDataType
         }
         return false;
     }
+    function onPublish( $contentObjectAttribute, $contentObject, $publishedNodes )
+    {
+        $trans = $contentObjectAttribute->fetchAttributeTranslations();
+        $xml = $contentObjectAttribute->attribute( "data_text" );
+        $dom2 = new DOMDocument( '1.0', 'utf-8' );
+        $dom2->loadXML( $xml );
+        $priority = $dom2->getElementsByTagName( "priority" )->item( 0 );
+        $change = $dom2->getElementsByTagName( "change" )->item( 0 );
+        $googlemap = $dom2->getElementsByTagName( "googlemap" )->item( 0 );
+        foreach ( $trans as $translation )
+        {
+            if ( $contentObjectAttribute->LanguageCode == $translation->LanguageCode )
+            {
+                continue;
+            }
+            $old = $translation->attribute( "data_text" );
+            $dom = new DOMDocument( '1.0', 'utf-8' );
+            $dom->loadXML( $old );
 
+            $dom->documentElement->replaceChild( $dom->importNode( $priority, true ), $dom->getElementsByTagName( "priority" )->item( 0 ) );
+            $dom->documentElement->replaceChild( $dom->importNode( $change, true ), $dom->getElementsByTagName( "change" )->item( 0 ) );
+            $dom->documentElement->replaceChild( $dom->importNode( $googlemap, true ), $dom->getElementsByTagName( "googlemap" )->item( 0 ) );
+
+            $translation->setAttribute( "data_text", $dom->saveXML() );
+            eZPersistentObject::storeObject( $translation );
+        }
+    }
     /*!
      Does nothing since it uses the data_text field in the content object attribute.
      See fetchObjectAttributeHTTPInput for the actual storing.
@@ -91,6 +115,7 @@ class xrowMetaDataType extends eZDataType
     	{
     		eZPersistentObject::storeObject( $attribute );
     	}
+
         $meta= $attribute->content();
         $xml = new DOMDocument( "1.0", "UTF-8" );
         $xmldom = $xml->createElement( "MetaData" );

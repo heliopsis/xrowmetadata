@@ -23,6 +23,7 @@ else
 }
 
 //getting custom set site access or default access
+$defaultAccess = $ini->variable( 'SiteSettings', 'DefaultAccess' );
 if ( $googlesitemapsINI->hasVariable( 'SiteAccessSettings', 'AvailableSiteAccessList' ) )
 {
     $siteAccessArray = $googlesitemapsINI->variable( 'SiteAccessSettings', 'AvailableSiteAccessList' );
@@ -30,7 +31,7 @@ if ( $googlesitemapsINI->hasVariable( 'SiteAccessSettings', 'AvailableSiteAccess
 else
 {
     $siteAccessArray = array(
-        $ini->variable( 'SiteSettings', 'DefaultAccess' )
+        $defaultAccess
     );
 }
 
@@ -143,7 +144,9 @@ foreach ( $languages as $language )
     {
         $url = $rootNode->attribute( 'url_alias' );
         eZURI::transformURI( $url, true, 'full' );
-        $url = 'http://' . $domain .'/'. $language["siteaccess"] . $url;
+        if($defaultAccess == $language["siteaccess"]){
+        	$url = 'http://' . $domain . $url;
+        } else $url = 'http://' . $domain .'/'. $language["siteaccess"] . $url;
 
         $sitemap->add( $url, $modified, $meta->change, $meta->priority );
     }
@@ -161,8 +164,10 @@ foreach ( $languages as $language )
 
         $url = $rootNode->attribute( 'url_alias' );
         eZURI::transformURI( $url, true, 'full' );
-        $url = 'http://' . $domain .'/'. $language["siteaccess"] . $url;
-
+        if($defaultAccess == $language["siteaccess"]){
+        	$url = 'http://' . $domain . $url;
+        } else $url = 'http://' . $domain .'/'. $language["siteaccess"] . $url;
+        
         $sitemap->add( $url, $modified, null, $prio );
     }
 
@@ -183,16 +188,20 @@ foreach ( $languages as $language )
         {
             $url = $subTreeNode->attribute( 'url_alias' );
             eZURI::transformURI( $url, true, 'full' );
-            $url = 'http://' . $domain .'/'. $language["siteaccess"] . $url;
-
+	        if($defaultAccess == $language["siteaccess"]){
+	        	$url = 'http://' . $domain . $url;
+	        } else $url = 'http://' . $domain .'/'. $language["siteaccess"] . $url;
+            
             $sitemap->add( $url, $modified, $meta->change, $meta->priority );
         }
         elseif ( $meta === false )
         {
             $url = $subTreeNode->attribute( 'url_alias' );
             eZURI::transformURI( $url, true, 'full' );
-            $url = 'http://' . $domain .'/'. $language["siteaccess"] . $url;
-
+	        if($defaultAccess == $language["siteaccess"]){
+	        	$url = 'http://' . $domain . $url;
+	        } else $url = 'http://' . $domain .'/'. $language["siteaccess"] . $url;
+            
             if ( $addPrio )
             {
                 $rootDepth = $rootNode->attribute( 'depth' );

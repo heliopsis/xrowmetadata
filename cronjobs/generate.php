@@ -273,16 +273,16 @@ foreach ( $languages as $language )
     }
 
     // write XML Sitemap to file
-    $dir = eZSys::storageDirectory() . '/sitemap/' . $domain;
+    $dir = eZSys::storageDirectory() . '/sitemap';
     mkdir( $dir, 0777, true );
 
     if ( count( $languages ) != 1 )
     {
-        $filename = $dir . '/' . xrowGoogleSiteMap::BASENAME . '_' . $language['siteaccess'] . '.' . xrowGoogleSiteMap::SUFFIX;
+        $filename = $dir . '/' . $language['siteaccess'] . '_' . xrowGoogleSiteMap::BASENAME . '_' . $language['siteaccess'] . '.' . xrowGoogleSiteMap::SUFFIX;
     }
     else
     {
-        $filename = $dir . '/' . xrowGoogleSiteMap::BASENAME . '.' . xrowGoogleSiteMap::SUFFIX;
+        $filename = $dir . '/' . $language['siteaccess'] . '_' . xrowGoogleSiteMap::BASENAME . '.' . xrowGoogleSiteMap::SUFFIX;
     }
     $sitemap->save( $filename );
 

@@ -104,6 +104,7 @@ foreach ( $languages as $language )
 
     // Fetch the content tree
     $params = array(
+        'MainNodeOnly' => true,
         'ClassFilterType' => $classFilterType,
         'ClassFilterArray' => $classFilterArray,
         'Limit' => 49999, // max. amount of links in 1 sitemap
@@ -135,9 +136,9 @@ foreach ( $languages as $language )
     // Generate Sitemap
     // Adding the root node
     $object = $rootNode->object();
-    
+
     $meta = xrowMetaDataFunctions::fetchByObject( $object );
-    
+
     $modified = $rootNode->attribute( 'modified_subnode' );
 
     if ( $meta AND $meta->googlemap != '0' )
@@ -167,7 +168,7 @@ foreach ( $languages as $language )
         if($defaultAccess == $language["siteaccess"]){
         	$url = 'http://' . $domain . $url;
         } else $url = 'http://' . $domain .'/'. $language["siteaccess"] . $url;
-        
+
         $sitemap->add( $url, $modified, null, $prio );
     }
 
@@ -191,7 +192,7 @@ foreach ( $languages as $language )
 	        if($defaultAccess == $language["siteaccess"]){
 	        	$url = 'http://' . $domain . $url;
 	        } else $url = 'http://' . $domain .'/'. $language["siteaccess"] . $url;
-            
+
             $sitemap->add( $url, $modified, $meta->change, $meta->priority );
         }
         elseif ( $meta === false )
@@ -201,7 +202,7 @@ foreach ( $languages as $language )
 	        if($defaultAccess == $language["siteaccess"]){
 	        	$url = 'http://' . $domain . $url;
 	        } else $url = 'http://' . $domain .'/'. $language["siteaccess"] . $url;
-            
+
             if ( $addPrio )
             {
                 $rootDepth = $rootNode->attribute( 'depth' );

@@ -275,16 +275,12 @@ foreach ( $languages as $language )
 
     // write XML Sitemap to file
     $dir = eZSys::storageDirectory() . '/sitemap';
-    mkdir( $dir, 0777, true );
+    if( !file_exists( $dir ) )
+    {
+        mkdir( $dir, 0777, true );
+    }
 
-    if ( count( $languages ) != 1 )
-    {
-        $filename = $dir . '/' . $language['siteaccess'] . '_' . xrowGoogleSiteMap::BASENAME . '_' . $language['siteaccess'] . '.' . xrowGoogleSiteMap::SUFFIX;
-    }
-    else
-    {
-        $filename = $dir . '/' . $language['siteaccess'] . '_' . xrowGoogleSiteMap::BASENAME . '.' . xrowGoogleSiteMap::SUFFIX;
-    }
+    $filename = $dir . '/' . $language['siteaccess'] . '_' . xrowGoogleSiteMap::BASENAME . '.' . xrowGoogleSiteMap::SUFFIX;
     $sitemap->save( $filename );
 
     if ( function_exists( 'gzencode' )

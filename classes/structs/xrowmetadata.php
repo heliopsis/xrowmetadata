@@ -8,11 +8,13 @@ class xrowMetaData extends ezcBaseStruct
     public $keywords;
     public $description;
     public $googlemap;
-    public function __construct( $title = false, $keywords = false, $description = false, $priority = false, $change = false, $googlemap = false )
+    public $urlsegment;
+    public function __construct( $title = false, $keywords = false, $description = false, $priority = false, $change = false, $googlemap = false, $urlsegment = false )
     {
         $this->title = $title;
         $this->keywords = $keywords;
         $this->description = $description;
+        $this->urlsegment = $urlsegment;
         if ( empty( $priority ) )
         {
             $this->priority = '0.5';
@@ -60,7 +62,7 @@ class xrowMetaData extends ezcBaseStruct
      */
     static public function __set_state( array $array )
     {
-        return new xrowMetaData( $array['title'], $array['keywords'], $array['description'], $array['priority'], $array['change'] );
+        return new xrowMetaData( $array['title'], $array['keywords'], $array['description'], $array['priority'], $array['change'], $array['urlsegment'] );
     }
 }
 ?>

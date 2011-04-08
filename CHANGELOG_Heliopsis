@@ -16,3 +16,7 @@ Some changes were made to the sitemap generation module :
   	
   	RewriteRule ^(.+)_sitemap\.xml$ index_sitemapproxy.php
 	RewriteRule ^index_sitemapproxy\.php - [L]
+
+	
+2011-04-08
+* Add url segment field, available in title field

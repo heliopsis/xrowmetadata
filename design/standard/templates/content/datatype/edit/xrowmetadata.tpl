@@ -19,6 +19,12 @@
 
 <div class="block">
 
+<label>{'URL Segment'|i18n( 'design/standard/class/datatype' )}:</label>
+<input id="ezcoa-{if ne( $attribute_base, 'ContentObjectAttribute' )}{$attribute_base}-{/if}{$attribute.contentclassattribute_id}_{$attribute.contentclass_attribute_identifier}_urlsegment" class="box ezcc-{$attribute.object.content_class.identifier} ezcca-{$attribute.object.content_class.identifier}_{$attribute.contentclass_attribute_identifier}" type="text" name="{$attribute_base}_xrowmetadata_data_array_{$attribute.id}[urlsegment]" size="100" maxsize="1055" value="{$attribute.content.urlsegment|wash()}" />
+</div>
+
+<div class="block">
+
 <label>{'Googlemap'|i18n( 'design/standard/class/datatype' )}:</label>
 <select id="ezcoa-{if ne( $attribute_base, 'ContentObjectAttribute' )}{$attribute_base}-{/if}{$attribute.contentclassattribute_id}_{$attribute.contentclass_attribute_identifier}_keywords" class="ezcc-{$attribute.object.content_class.identifier} ezcca-{$attribute.object.content_class.identifier}_{$attribute.contentclass_attribute_identifier}" name="{$attribute_base}_xrowmetadata_data_array_{$attribute.id}[googlemap]" size="1">
 <option value="0" {if ne($attribute.content.googlemap,'1')}selected{/if}>disabled</option>

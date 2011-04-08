@@ -132,6 +132,9 @@ class xrowMetaDataType extends eZDataType
         $node = $xml->createElement( "googlemap", htmlspecialchars( $meta->googlemap, ENT_QUOTES, 'UTF-8' ) );
         $xmldom->appendChild( $node );
         $xml->appendChild( $xmldom );
+        $node = $xml->createElement( "urlsegment", htmlspecialchars( $meta->urlsegment, ENT_QUOTES, 'UTF-8' ) );
+        $xmldom->appendChild( $node );
+        $xml->appendChild( $xmldom );
         $attribute->setAttribute( 'data_text', $xml->saveXML() );
 
         // save keywords
@@ -226,7 +229,8 @@ class xrowMetaDataType extends eZDataType
                                      htmlspecialchars_decode( (string)$xml->description, ENT_QUOTES ),
                                      htmlspecialchars_decode( (string)$xml->priority, ENT_QUOTES ),
                                      htmlspecialchars_decode( (string)$xml->change, ENT_QUOTES ),
-                                     htmlspecialchars_decode( (string)$xml->googlemap , ENT_QUOTES ) );
+                                     htmlspecialchars_decode( (string)$xml->googlemap , ENT_QUOTES ),
+                                     htmlspecialchars_decode( (string)$xml->urlsegment , ENT_QUOTES ) );
            return $meta;
         }
         catch ( Exception $e )
@@ -241,7 +245,7 @@ class xrowMetaDataType extends eZDataType
      */
     function fillMetaData( $array )
     {
-        return new xrowMetaData( $array['title'], $array['keywords'], $array['description'], $array['priority'], $array['change'], $array['googlemap'] );
+        return new xrowMetaData( $array['title'], $array['keywords'], $array['description'], $array['priority'], $array['change'], $array['googlemap'], $array['urlsegment'] );
     }
     /*!
      Returns the content.
@@ -274,7 +278,7 @@ class xrowMetaDataType extends eZDataType
     function title( $attribute, $name = null )
     {
         $meta = self::fetchMetaData( $attribute );
-        return $meta->title;
+        return $meta->urlsegment;
     }
 
     function hasObjectAttributeContent( $contentObjectAttribute )

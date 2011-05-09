@@ -1,4 +1,4 @@
-﻿Installation:
+Installation:
 
 After this the extension has been installed. You should be able to generate the sitemap 
 using the runcronjobs.php script. See "googlesitemaps.ini" for more configuration options.

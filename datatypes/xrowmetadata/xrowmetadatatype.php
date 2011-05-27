@@ -9,7 +9,7 @@ class xrowMetaDataType extends eZDataType
     */
     function xrowMetaDataType()
     {
-        $this->eZDataType( self::DATA_TYPE_STRING, ezi18n( 'kernel/classes/datatypes', 'Metadata', 'Datatype name' ), array(
+        $this->eZDataType( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', 'Metadata', 'Datatype name' ), array(
             'serialize_supported' => true
         ) );
     }
@@ -50,12 +50,12 @@ class xrowMetaDataType extends eZDataType
             {
                 if ( $data == "" )
                 {
-                    $contentObjectAttribute->setValidationError( ezi18n( 'kernel/classes/datatypes', 'Input required.' ) );
+                    $contentObjectAttribute->setValidationError( ezpI18n::tr( 'kernel/classes/datatypes', 'Input required.' ) );
                     return eZInputValidator::STATE_INVALID;
                 }
                 if ( empty( $data['title'] ) )
                 {
-                    $contentObjectAttribute->setValidationError( ezi18n( 'kernel/classes/datatypes', 'Title required.' ) );
+                    $contentObjectAttribute->setValidationError( ezpI18n::tr( 'kernel/classes/datatypes', 'Title required.' ) );
                     return eZInputValidator::STATE_INVALID;
                 }
             }

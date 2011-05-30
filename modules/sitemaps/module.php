@@ -12,4 +12,7 @@ $ViewList["index"] = array(
 $ViewList["robots"] = array(
     "script" => "robots.php",
     'params' => array(  ) );
+$ViewList["proxy"] = array(
+    "script" => "proxy.php",
+    'params' => array('FileName') );
 ?>

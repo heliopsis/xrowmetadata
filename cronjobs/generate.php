@@ -23,6 +23,7 @@ else
 }
 
 //getting custom set site access or default access
+$defaultAccess = $ini->variable( 'SiteSettings', 'DefaultAccess' );
 if ( $googlesitemapsINI->hasVariable( 'SiteAccessSettings', 'AvailableSiteAccessList' ) )
 {
     $siteAccessArray = $googlesitemapsINI->variable( 'SiteAccessSettings', 'AvailableSiteAccessList' );
@@ -30,7 +31,7 @@ if ( $googlesitemapsINI->hasVariable( 'SiteAccessSettings', 'AvailableSiteAccess
 else
 {
     $siteAccessArray = array(
-        $ini->variable( 'SiteSettings', 'DefaultAccess' )
+        $defaultAccess
     );
 }
 
@@ -103,6 +104,7 @@ foreach ( $languages as $language )
 
     // Fetch the content tree
     $params = array(
+        'MainNodeOnly' => true,
         'ClassFilterType' => $classFilterType,
         'ClassFilterArray' => $classFilterArray,
         'Limit' => 49999, // max. amount of links in 1 sitemap
@@ -134,16 +136,18 @@ foreach ( $languages as $language )
     // Generate Sitemap
     // Adding the root node
     $object = $rootNode->object();
-    
+
     $meta = xrowMetaDataFunctions::fetchByObject( $object );
-    
+
     $modified = $rootNode->attribute( 'modified_subnode' );
 
     if ( $meta AND $meta->googlemap != '0' )
     {
         $url = $rootNode->attribute( 'url_alias' );
         eZURI::transformURI( $url, true, 'full' );
-        $url = 'http://' . $domain .'/'. $language["siteaccess"] . $url;
+        if($defaultAccess == $language["siteaccess"]){
+        	$url = 'http://' . $domain . $url;
+        } else $url = 'http://' . $domain .'/'. $language["siteaccess"] . $url;
 
         $sitemap->add( $url, $modified, $meta->change, $meta->priority );
     }
@@ -161,7 +165,9 @@ foreach ( $languages as $language )
 
         $url = $rootNode->attribute( 'url_alias' );
         eZURI::transformURI( $url, true, 'full' );
-        $url = 'http://' . $domain .'/'. $language["siteaccess"] . $url;
+        if($defaultAccess == $language["siteaccess"]){
+        	$url = 'http://' . $domain . $url;
+        } else $url = 'http://' . $domain .'/'. $language["siteaccess"] . $url;
 
         $sitemap->add( $url, $modified, null, $prio );
     }
@@ -183,7 +189,9 @@ foreach ( $languages as $language )
         {
             $url = $subTreeNode->attribute( 'url_alias' );
             eZURI::transformURI( $url, true, 'full' );
-            $url = 'http://' . $domain .'/'. $language["siteaccess"] . $url;
+	        if($defaultAccess == $language["siteaccess"]){
+	        	$url = 'http://' . $domain . $url;
+	        } else $url = 'http://' . $domain .'/'. $language["siteaccess"] . $url;
 
             $sitemap->add( $url, $modified, $meta->change, $meta->priority );
         }
@@ -191,7 +199,9 @@ foreach ( $languages as $language )
         {
             $url = $subTreeNode->attribute( 'url_alias' );
             eZURI::transformURI( $url, true, 'full' );
-            $url = 'http://' . $domain .'/'. $language["siteaccess"] . $url;
+	        if($defaultAccess == $language["siteaccess"]){
+	        	$url = 'http://' . $domain . $url;
+	        } else $url = 'http://' . $domain .'/'. $language["siteaccess"] . $url;
 
             if ( $addPrio )
             {
@@ -264,17 +274,13 @@ foreach ( $languages as $language )
     }
 
     // write XML Sitemap to file
-    $dir = eZSys::storageDirectory() . '/sitemap/' . $domain;
-    mkdir( $dir, 0777, true );
+    $dir = eZSys::storageDirectory() . '/sitemap';
+    if( !file_exists( $dir ) )
+    {
+        mkdir( $dir, 0777, true );
+    }
 
-    if ( count( $languages ) != 1 )
-    {
-        $filename = $dir . '/' . xrowGoogleSiteMap::BASENAME . '_' . $language['siteaccess'] . '.' . xrowGoogleSiteMap::SUFFIX;
-    }
-    else
-    {
-        $filename = $dir . '/' . xrowGoogleSiteMap::BASENAME . '.' . xrowGoogleSiteMap::SUFFIX;
-    }
+    $filename = $dir . '/' . $language['siteaccess'] . '_' . xrowGoogleSiteMap::BASENAME . '.' . xrowGoogleSiteMap::SUFFIX;
     $sitemap->save( $filename );
 
     if ( function_exists( 'gzencode' )

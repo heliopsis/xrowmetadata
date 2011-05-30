@@ -16,6 +16,10 @@
         <translation>Suchbegriffe (Meta Keywords)</translation>
     </message>
     <message>
+        <source>URL Segment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Googlemap</source>
         <translation>Googlemap</translation>
     </message>

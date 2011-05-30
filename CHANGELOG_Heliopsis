@@ -1,0 +1,22 @@
+Some changes were made to the sitemap generation module :
+
+2010-12-24
+* Exclude default siteaccess name from URLs in generated sitemap
+
+
+2010-12-29
+* Proxying generated sitemaps with a new module in order for Google Webmaster Tools not 
+  to consider sitemap as var/<vardir>/storage/sitemap/<domain>/ subdirectory only sitemap but as a 
+  global sitemap
+  
+  - Generated files were renamed according to the following pattern :
+  	var/<vardir>/storage/sitemap/<siteaccess>_sitemap.xml
+  - a new index_sitemapproxy.php was created to proxy sitemap files data as if in root directory
+  	You've got to symlink or copy this file in root directory and add the following lines in .htaccess :
+  	
+  	RewriteRule ^(.+)_sitemap\.xml$ index_sitemapproxy.php
+	RewriteRule ^index_sitemapproxy\.php - [L]
+
+	
+2011-04-08
+* Add url segment field, available in title field

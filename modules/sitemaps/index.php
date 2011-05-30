@@ -15,30 +15,22 @@ $dirname = eZSys::storageDirectory() . '/sitemap';
 $dir = new DirectoryIterator( $dirname );
 foreach ( $dir as $file2 )
 {
-    if ( ! $file2->isDot() and $file2->isDir() and ( strpos( $_SERVER['HTTP_HOST'], $file2->getFilename() ) !== false ) )
+    if ( ! $file2->isDot() and !$file2->isDir() )
     {
-        $dir2 = new DirectoryIterator( $file2->getPathname() );
-        foreach ( $dir2 as $file )
-        {
-            if ( $file->isDot() and $file->isDir() )
-            {
-                continue;
-            }
-            $dt = new DateTime( "@" . $file->getMTime() );
-            $sitemap = $dom->createElement( 'sitemap' );
-            $loc = $dom->createElement( 'loc', 'http://' . $_SERVER['HTTP_HOST'] . '/' . $dirname . '/' . $file2->getFilename() . '/' . $file->getFilename() );
-            $lastmod = $dom->createElement( 'lastmod', $dt->format( DateTime::W3C ) );
-            $sitemap->appendChild( $loc );
-            $sitemap->appendChild( $lastmod );
-            $dom->documentElement->appendChild( $sitemap );
-        }
+		$dt = new DateTime( "@" . $file2->getMTime() );
+		$sitemap = $dom->createElement( 'sitemap' );
+		$loc = $dom->createElement( 'loc', 'http://' . $_SERVER['HTTP_HOST'] . '/' . $file2->getFilename() );
+		$lastmod = $dom->createElement( 'lastmod', $dt->format( DateTime::W3C ) );
+		$sitemap->appendChild( $loc );
+		$sitemap->appendChild( $lastmod );
+		$dom->documentElement->appendChild( $sitemap );
     }
 }
 unset( $dir );
 $content = $dom->saveXML();
 
 // Set header settings
-header( 'Content-Type: text/xml; charset=UTF-8' );
+header( 'Content-Type: application/xml; charset=UTF-8' );
 header( 'Content-Length: ' . strlen( $content ) );
 header( 'X-Powered-By: eZ Publish' );
 

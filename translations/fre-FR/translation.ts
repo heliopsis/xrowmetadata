@@ -16,6 +16,10 @@
         <translation>Mots clés</translation>
     </message>
     <message>
+        <source>URL Segment</source>
+        <translation>Segment d'URL</translation>
+    </message>
+    <message>
         <source>Googlemap</source>
         <translation>Googlemap</translation>
     </message>

@@ -145,9 +145,7 @@ foreach ( $languages as $language )
     {
         $url = $rootNode->attribute( 'url_alias' );
         eZURI::transformURI( $url, true, 'full' );
-        if($defaultAccess == $language["siteaccess"]){
-        	$url = 'http://' . $domain . $url;
-        } else $url = 'http://' . $domain .'/'. $language["siteaccess"] . $url;
+        $url = 'http://' . $domain . $url;
 
         $sitemap->add( $url, $modified, $meta->change, $meta->priority );
     }
@@ -165,9 +163,7 @@ foreach ( $languages as $language )
 
         $url = $rootNode->attribute( 'url_alias' );
         eZURI::transformURI( $url, true, 'full' );
-        if($defaultAccess == $language["siteaccess"]){
-        	$url = 'http://' . $domain . $url;
-        } else $url = 'http://' . $domain .'/'. $language["siteaccess"] . $url;
+        $url = 'http://' . $domain . $url;
 
         $sitemap->add( $url, $modified, null, $prio );
     }
@@ -189,9 +185,7 @@ foreach ( $languages as $language )
         {
             $url = $subTreeNode->attribute( 'url_alias' );
             eZURI::transformURI( $url, true, 'full' );
-	        if($defaultAccess == $language["siteaccess"]){
-	        	$url = 'http://' . $domain . $url;
-	        } else $url = 'http://' . $domain .'/'. $language["siteaccess"] . $url;
+	        $url = 'http://' . $domain . $url;
 
             $sitemap->add( $url, $modified, $meta->change, $meta->priority );
         }
@@ -199,9 +193,7 @@ foreach ( $languages as $language )
         {
             $url = $subTreeNode->attribute( 'url_alias' );
             eZURI::transformURI( $url, true, 'full' );
-	        if($defaultAccess == $language["siteaccess"]){
-	        	$url = 'http://' . $domain . $url;
-	        } else $url = 'http://' . $domain .'/'. $language["siteaccess"] . $url;
+	        $url = 'http://' . $domain . $url;
 
             if ( $addPrio )
             {

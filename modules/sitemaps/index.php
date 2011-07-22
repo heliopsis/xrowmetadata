@@ -1,5 +1,5 @@
 <?php
-
+print 'ddgfgf';
 $ini = eZINI::instance( 'xrowmetadata.ini' );
 
 $imp = new DomImplementation( );
@@ -12,14 +12,31 @@ $dom->documentElement->appendChild( $attr );
 $sitemap = $dom->createElement( 'sitemap', 'asdasd' );
 $attr->appendChild( $sitemap );
 $dirname = eZSys::storageDirectory() . '/sitemap';
-$dir = new DirectoryIterator( $dirname );
-foreach ( $dir as $file2 )
+$siteAccessList = array();
+$googlesitemapsINI = eZINI::instance( 'googlesitemaps.ini' );
+
+if ( $googlesitemapsINI->hasVariable( 'SiteAccessSettings', 'RelatedSitemaps' ) )
 {
-    if ( ! $file2->isDot() and !$file2->isDir() )
+	$relatedSitemaps = $googlesitemapsINI->variable( 'SiteAccessSettings', 'RelatedSitemaps' );
+	if( !empty( $relatedSitemaps ) )
+	{
+		$siteAccessList = $relatedSitemaps;
+	}
+}
+
+if( empty( $siteAccessList ) )
+{
+	$siteAccessList = array( eZSiteAccess::current() );
+}
+
+foreach ( $siteAccessList as $siteAccess )
+{
+	$file = $dirname . '/' . $siteAccess . '_sitemap.xml';
+    if ( file_exists( $file ) )
     {
-		$dt = new DateTime( "@" . $file2->getMTime() );
+		$dt = new DateTime( "@" . filemtime( $file ) );
 		$sitemap = $dom->createElement( 'sitemap' );
-		$loc = $dom->createElement( 'loc', 'http://' . $_SERVER['HTTP_HOST'] . '/' . $file2->getFilename() );
+		$loc = $dom->createElement( 'loc', 'http://' . $_SERVER['HTTP_HOST'] . '/' . basename( $file ) );
 		$lastmod = $dom->createElement( 'lastmod', $dt->format( DateTime::W3C ) );
 		$sitemap->appendChild( $loc );
 		$sitemap->appendChild( $lastmod );
@@ -30,9 +47,9 @@ unset( $dir );
 $content = $dom->saveXML();
 
 // Set header settings
-header( 'Content-Type: application/xml; charset=UTF-8' );
+/*header( 'Content-Type: application/xml; charset=UTF-8' );
 header( 'Content-Length: ' . strlen( $content ) );
-header( 'X-Powered-By: eZ Publish' );
+header( 'X-Powered-By: eZ Publish' );*/
 
 while ( @ob_end_clean() );
 

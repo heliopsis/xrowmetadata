@@ -1,5 +1,4 @@
 <?php
-print 'ddgfgf';
 $ini = eZINI::instance( 'xrowmetadata.ini' );
 
 $imp = new DomImplementation( );
@@ -26,7 +25,8 @@ if ( $googlesitemapsINI->hasVariable( 'SiteAccessSettings', 'RelatedSitemaps' ) 
 
 if( empty( $siteAccessList ) )
 {
-	$siteAccessList = array( eZSiteAccess::current() );
+    $currentAccess = eZSiteAccess::current();
+    $siteAccessList = array( $currentAccess['name'] );
 }
 
 foreach ( $siteAccessList as $siteAccess )
@@ -47,9 +47,9 @@ unset( $dir );
 $content = $dom->saveXML();
 
 // Set header settings
-/*header( 'Content-Type: application/xml; charset=UTF-8' );
+header( 'Content-Type: application/xml; charset=UTF-8' );
 header( 'Content-Length: ' . strlen( $content ) );
-header( 'X-Powered-By: eZ Publish' );*/
+header( 'X-Powered-By: eZ Publish' );
 
 while ( @ob_end_clean() );
 

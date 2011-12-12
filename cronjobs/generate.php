@@ -37,7 +37,6 @@ else
 
 //fetching all language codes
 $languages = array();
-$allDomains = array();
 $old_access = $GLOBALS['eZCurrentAccess'];
 foreach ( $siteAccessArray as $siteAccess )
 {
@@ -51,22 +50,13 @@ foreach ( $siteAccessArray as $siteAccess )
             'locale' => $specificINI->variable( 'RegionalSettings', 'ContentObjectLocale' ) ,
             'siteurl' => $specificINI->variable( 'SiteSettings', 'SiteURL' )
         ) );
-        $domain = preg_split( '/[\/\:]/i', $specificINI->variable( 'SiteSettings', 'SiteURL' ), 2 );
-        if ( is_array( $domain ) )
-        {
-            $allDomains[] = $domain[0];
-        }
-        else
-        {
-            $allDomains[] = $siteURL;
-        }
+
     }
     else
     {
         $cli->output( "site.ini[RegionalSettings]ContentObjectLocale not found for siteaccess \"". $siteAccess . "\" \n" );
     }
 }
-$allDomains = array_unique( $allDomains );
 
 foreach ( $languages as $language )
 {
@@ -82,16 +72,8 @@ foreach ( $languages as $language )
         $cli->output( "Generating Sitemap for Siteaccess " . $language["siteaccess"] . " \n" );
     }
 
-    $siteURL = $language['siteurl'];
-    $domain = preg_split( '/[\/\:]/i', $siteURL, 2 );
-    if ( is_array( $domain ) )
-    {
-        $domain = $domain[0];
-    }
-    else
-    {
-        $domain = $siteURL;
-    }
+    $domain = $language['siteurl'];
+
     // Get the Sitemap's root node
     $contentINI = eZINI::instance( 'content.ini' );
     $rootNode = eZContentObjectTreeNode::fetch( $contentINI->variable( 'NodeSettings', 'RootNode' ) );

@@ -127,7 +127,6 @@ foreach ( $languages as $language )
     {
         $url = $rootNode->attribute( 'url_alias' );
         eZURI::transformURI( $url, true, 'full' );
-        $url = 'http://' . $domain . $url;
 
         $sitemap->add( $url, $modified, $meta->change, $meta->priority );
     }
@@ -145,7 +144,6 @@ foreach ( $languages as $language )
 
         $url = $rootNode->attribute( 'url_alias' );
         eZURI::transformURI( $url, true, 'full' );
-        $url = 'http://' . $domain . $url;
 
         $sitemap->add( $url, $modified, null, $prio );
     }
@@ -167,7 +165,6 @@ foreach ( $languages as $language )
         {
             $url = $subTreeNode->attribute( 'url_alias' );
             eZURI::transformURI( $url, true, 'full' );
-	        $url = 'http://' . $domain . $url;
 
             $sitemap->add( $url, $modified, $meta->change, $meta->priority );
         }
@@ -175,7 +172,6 @@ foreach ( $languages as $language )
         {
             $url = $subTreeNode->attribute( 'url_alias' );
             eZURI::transformURI( $url, true, 'full' );
-	        $url = 'http://' . $domain . $url;
 
             if ( $addPrio )
             {
@@ -220,7 +216,7 @@ foreach ( $languages as $language )
     foreach ( $manualItems as $mKey => $mItem )
     {
         $url = $mItem;
-        $url = 'http://' . $domain . $url;
+        eZURI::transformURI( $url, true, 'full' );
 
         if ( isset( $manualPriority[$mKey] ) )
         {

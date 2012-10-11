@@ -1,5 +1,4 @@
 <?php
-require_once "access.php";
 if ( !$isQuiet )
 {
     $cli->output( "Generating Sitemap...\n" );
@@ -40,7 +39,7 @@ $languages = array();
 $old_access = $GLOBALS['eZCurrentAccess'];
 foreach ( $siteAccessArray as $siteAccess )
 {
-    changeAccess( array( 'name' => $siteAccess, 'type' => EZ_ACCESS_TYPE_URI ) );
+    eZSiteAccess::change( array( 'name' => $siteAccess, 'type' => eZSiteAccess::TYPE_URI ) );
 
     $specificINI = eZINI::instance( 'site.ini' );
     if ( $specificINI->hasVariable( 'RegionalSettings', 'ContentObjectLocale' ) )
@@ -61,9 +60,9 @@ foreach ( $siteAccessArray as $siteAccess )
 foreach ( $languages as $language )
 {
     /* Change the siteaccess */
-    $access = changeAccess( array(
+    $access = eZSiteAccess::change( array(
         "name" => $language["siteaccess"] ,
-        "type" => EZ_ACCESS_TYPE_URI
+        "type" => eZSiteAccess::TYPE_URI
     ) );
     unset( $GLOBALS['eZContentObjectDefaultLanguage'] );
     eZContentLanguage::expireCache();
@@ -269,5 +268,5 @@ foreach ( $languages as $language )
         $cli->output( "Sitemap $filename for siteaccess " . $language['siteaccess'] . " (language code " . $language['locale'] . ") has been generated!\n\n" );
     }
 }
-changeAccess( $old_access );
+eZSiteAccess::change( $old_access );
 ?>

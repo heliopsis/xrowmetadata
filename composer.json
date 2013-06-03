@@ -1,0 +1,26 @@
+{
+    "name": "heliopsis/legacy-xrowmetadata",
+    "version": "1.0.0",
+    "type": "ezpublish-legacy-extension",
+    "authors": [
+        {
+            "name": "Benjamin Choquet",
+            "email": "benjamin.choquet@heliopsis.net"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:Heliopsis-HQ/ezpublish-legacy-installer.git"
+        }  
+    ],
+    "require": {
+        "ezsystems/ezpublish-legacy": ">=5.1@dev",
+        "heliopsis/ezpublish-legacy-installer": "dev-master"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-composer": "1.0.x-dev"
+        }
+    }
+}

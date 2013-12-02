@@ -8,15 +8,9 @@
             "email": "benjamin.choquet@heliopsis.net"
         }
     ],
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@github.com:Heliopsis-HQ/ezpublish-legacy-installer.git"
-        }  
-    ],
     "require": {
         "ezsystems/ezpublish-legacy": ">=5.1@dev",
-        "heliopsis/ezpublish-legacy-installer": "dev-master"
+        "ezsystems/ezpublish-legacy-installer": "@dev"
     },
     "extra": {
         "branch-alias": {

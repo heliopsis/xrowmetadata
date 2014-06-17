@@ -245,7 +245,15 @@ class xrowMetaDataType extends eZDataType
      */
     function fillMetaData( $array )
     {
-        return new xrowMetaData( $array['title'], $array['keywords'], $array['description'], $array['priority'], $array['change'], $array['googlemap'], $array['urlsegment'] );
+        return new xrowMetaData(
+            isset( $array['title'] ) ? $array['title'] : false,
+            isset( $array['keywords'] ) ? $array['keywords'] : false,
+            isset( $array['description'] ) ? $array['description'] : false,
+            isset( $array['priority'] ) ? $array['priority'] : false,
+            isset( $array['change'] ) ? $array['change'] : false,
+            isset( $array['googlemap'] ) ? $array['googlemap'] : false,
+            isset( $array['urlsegment'] ) ? $array['urlsegment'] : false
+        );
     }
     /*!
      Returns the content.
